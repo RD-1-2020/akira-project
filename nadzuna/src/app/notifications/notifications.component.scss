@@ -1,0 +1,20 @@
+.status-delivered {
+  color: #98971a; // green
+}
+
+.status-failed {
+  color: #cc241d; // red
+}
+
+.status-created {
+  color: #d79921; // yellow
+}
+
+td.mat-cell {
+  display: flex;
+  align-items: center;
+}
+
+mat-icon {
+  margin-right: 8px;
+}

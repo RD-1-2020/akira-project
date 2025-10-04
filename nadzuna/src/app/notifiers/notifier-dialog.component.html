@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>{{ isEdit ? 'Edit' : 'Create' }} Notifier</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Name</mat-label>
+        <input [(ngModel)]="data.name" matInput required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Notifier Type</mat-label>
+        <mat-select [(ngModel)]="data.notifier_type" [disabled]="isEdit" required>
+            <mat-option *ngFor="let type of notifierTypes" [value]="type">
+                {{ type }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="data.notifier_type === 'TELEGRAM'">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Bot Token</mat-label>
+            <input matInput [(ngModel)]="telegramData.botToken" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Chat ID</mat-label>
+            <input matInput [(ngModel)]="telegramData.chatId" required>
+        </mat-form-field>
+    </div>
+
+</div>
+<div align="end" mat-dialog-actions>
+    <button (click)="onNoClick()" mat-button>Cancel</button>
+    <button (click)="save()" color="primary" mat-raised-button>Save</button>
+</div>
+<style>
+    .full-width {
+        width: 100%;
+    }
+</style>

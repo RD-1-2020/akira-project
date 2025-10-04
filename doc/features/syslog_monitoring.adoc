@@ -1,0 +1,13 @@
+= Syslog Monitoring Feature
+
+This feature is part of the `AkiraMonitoring` interface.
+
+*   **Functionality**:
+    **  Receives Syslog messages from configured sources.
+    **  Stores all received messages in the database.
+    **  Provides a REST API to retrieve messages.
+        *** Filter by message source name.
+        *** Search by message text.
+*   **Configuration**:
+    **  URL from which Syslog messages are accepted.
+    **  An interval without messages that is considered a failure.

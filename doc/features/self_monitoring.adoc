@@ -1,0 +1,12 @@
+= Self Monitoring Feature
+
+This feature is part of the `AkiraMonitoring` interface and is designed to monitor the service's own health and connectivity.
+
+*   **Functionality**:
+    **  Periodically checks for internet connectivity. This can be done by pinging a reliable external host (e.g., a public DNS server).
+    **  If the internet connection is detected as lost, it sends a notification via the `AkiraNotifier` service.
+    **  The guaranteed delivery mechanism will ensure the notification is sent as soon as the connection is restored.
+*   **Configuration**:
+    **  Enable/disable the feature.
+    **  The external host to check for connectivity.
+    **  Check interval frequency.

@@ -1,0 +1,70 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Gruvbox dark theme palette
+// https://github.com/morhetz/gruvbox
+$gruvbox-dark-background: #282828;
+$gruvbox-dark-foreground: #ebdbb2;
+$gruvbox-dark-red: #cc241d;
+$gruvbox-dark-green: #98971a;
+$gruvbox-dark-yellow: #d79921;
+$gruvbox-dark-blue: #458588;
+$gruvbox-dark-purple: #b16286;
+$gruvbox-dark-aqua: #689d6a;
+$gruvbox-dark-gray: #a89984;
+$gruvbox-dark-orange: #d65d0e;
+
+
+// Create custom palettes using gruvbox colors
+$gruvbox-primary-palette-map: map.merge(mat.$m2-orange-palette, (
+  500: $gruvbox-dark-orange,
+  contrast: map.merge(map.get(mat.$m2-orange-palette, contrast), (
+    500: #ffffff
+  ))
+));
+
+$gruvbox-accent-palette-map: map.merge(mat.$m2-blue-grey-palette, (
+  500: $gruvbox-dark-blue,
+  contrast: map.merge(map.get(mat.$m2-blue-grey-palette, contrast), (
+    500: #ffffff
+  ))
+));
+
+$gruvbox-warn-palette-map: map.merge(mat.$m2-red-palette, (
+  500: $gruvbox-dark-red,
+  contrast: map.merge(map.get(mat.$m2-red-palette, contrast), (
+    500: #ffffff
+  ))
+));
+
+$anko-dark-primary: mat.m2-define-palette($gruvbox-primary-palette-map);
+$anko-dark-accent: mat.m2-define-palette($gruvbox-accent-palette-map, 500, 300, 700);
+$anko-dark-warn: mat.m2-define-palette($gruvbox-warn-palette-map);
+
+$anko-dark-theme: mat.m2-define-dark-theme((
+  color: (
+    primary: $anko-dark-primary,
+    accent: $anko-dark-accent,
+    warn: $anko-dark-warn,
+  )
+));
+
+// Apply the dark theme
+@include mat.all-component-themes($anko-dark-theme);
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: $gruvbox-dark-background;
+  color: $gruvbox-dark-foreground;
+}

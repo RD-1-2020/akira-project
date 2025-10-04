@@ -1,0 +1,44 @@
+<div class="container">
+    <h1>HTTP Monitors</h1>
+
+    <div class="actions">
+        <button (click)="openDialog()" color="primary" mat-flat-button>Create New Monitor</button>
+    </div>
+
+    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+            <th *matHeaderCellDef mat-header-cell> Name</th>
+            <td *matCellDef="let element" mat-cell> {{ element.name }}</td>
+        </ng-container>
+
+        <!-- URL Column -->
+        <ng-container matColumnDef="url">
+            <th *matHeaderCellDef mat-header-cell> URL</th>
+            <td *matCellDef="let element" mat-cell> {{ element.url }}</td>
+        </ng-container>
+
+        <!-- Interval Column -->
+        <ng-container matColumnDef="interval">
+            <th *matHeaderCellDef mat-header-cell> Interval</th>
+            <td *matCellDef="let element" mat-cell> {{ element.checkInterval }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th *matHeaderCellDef mat-header-cell> Actions</th>
+            <td *matCellDef="let element" mat-cell>
+                <button (click)="openDialog(element)" color="primary" mat-icon-button>
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button (click)="delete(element.id)" color="warn" mat-icon-button>
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+</div>

@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+}
+
+group = 'org.azurecloud.solutions'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
+    }
+}
+
+dependencies {
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.security
+    implementation libs.liquibase.core
+    implementation libs.telegrambots.spring.boot.starter
+    implementation libs.httpclient
+
+    runtimeOnly libs.postgresql
+
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.register('npmInstall', Exec) {
+    workingDir '../nadzuna'
+    commandLine 'npm.cmd', 'install'
+}
+
+tasks.register('buildFrontend', Exec) {
+    dependsOn npmInstall
+    workingDir '../nadzuna'
+    commandLine 'npm.cmd', 'run', 'build'
+}
+
+// Make the 'processResources' task depend on 'buildFrontend'
+processResources.dependsOn buildFrontend
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "../nadzuna/dist/nadzuna/browser"
+        }
+    }
+}
+
+processResources {
+    from("../nadzuna/dist/nadzuna/browser") {
+        into "static"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

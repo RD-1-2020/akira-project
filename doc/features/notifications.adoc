@@ -1,0 +1,18 @@
+= Notification Feature
+
+== AkiraNotification
+`AkiraNotifier` is a common interface for all notification services.
+
+== Telegram Notification
+This is the primary implementation of `AkiraNotifier`.
+
+*   **Configuration**:
+    **  Bot token.
+    **  Chat ID for sending notifications.
+    **  Message queue size for unsent messages.
+*   **Functionality**:
+    **  Sends messages to the specified Telegram chat.
+*   **Guaranteed Delivery**:
+    **  Messages are stored in the database with a status (`CREATED`, `DELIVERED`, `FAILED`).
+    **  Each message has a sender identifier.
+    **  A scheduler runs every 10 seconds to retry sending messages with the `CREATED` status.

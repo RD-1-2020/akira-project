@@ -1,0 +1,14 @@
+= HTTP(S) Monitoring Feature
+
+This feature is part of the `AkiraMonitoring` interface.
+
+*   **Functionality**:
+    **  Performs a GET request to a specified URL.
+    **  Checks if the response status code is 2xx.
+    **  If the check fails, it sends a notification via the `AkiraNotifier` service.
+    **  Ignores SSL/TLS certificate validation errors.
+*   **Configuration**:
+    **  URL to monitor.
+    **  Check interval frequency.
+    **  Maximum response timeout.
+    **  Choice of notification service.

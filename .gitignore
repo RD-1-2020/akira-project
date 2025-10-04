@@ -1,0 +1,32 @@
+# Gradle
+.gradle
+build/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Local files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Frontend dependencies and build artifacts
+**/node_modules/
+**/dist/
+**/.angular/
+npm-debug.log
+/coverage
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+*.crt
+*.key

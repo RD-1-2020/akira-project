@@ -1,0 +1,26 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define DEPS ../dependencies.toml
+
+title Component Diagram for Anko Project
+
+ContainerDb(db, "PostgreSQL", "Database", "Stores all application data.")
+
+Container_Boundary(akira_b, "Akira Service") {
+    Component(akira, "Akira", "Java, Spring Boot", "Main backend service providing the core logic and API.")
+    Component(nadzuna, "Nadzuna", "Angular", "Single Page Application providing the user interface.")
+    Component(monitoring, "Monitoring", "Java, Spring", "Handles HTTP(S), Syslog, and Self monitoring.")
+    Component(notifications, "Notifications", "Java, Spring", "Manages sending notifications (e.g., Telegram).")
+
+    Rel(nadzuna, akira, "Uses REST API", "HTTPS")
+    Rel(akira, monitoring, "Uses")
+    Rel(akira, notifications, "Uses")
+}
+
+System_Ext(telegram, "Telegram", "External messaging service.")
+
+Rel(akira, db, "Reads from and writes to", "TLS")
+Rel(notifications, telegram, "Sends messages to", "HTTPS")
+
+@enduml
