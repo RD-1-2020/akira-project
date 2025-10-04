@@ -17,10 +17,6 @@ export class ErrorInterceptor implements HttpInterceptor {
                 if (error.error && error.error.message) {
                     // Use the custom AkiraErrorDto message
                     errorMessage = `[${error.error.errorCode}] ${error.error.message}`;
-                } else if (error.status === 401 || error.status === 403) {
-                    // Redirect to login page for auth errors
-                    window.location.href = '/login';
-                    errorMessage = 'Authentication error. Please log in again.';
                 } else if (error.message) {
                     errorMessage = error.message;
                 }

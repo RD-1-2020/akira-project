@@ -48,8 +48,8 @@ $anko-dark-warn: mat.m2-define-palette($gruvbox-warn-palette-map);
 
 $anko-dark-theme: mat.m2-define-dark-theme((
   color: (
-    primary: $anko-dark-primary,
-    accent: $anko-dark-accent,
+    primary: $anko-dark-accent,
+    accent: $anko-dark-primary,
     warn: $anko-dark-warn,
   )
 ));
