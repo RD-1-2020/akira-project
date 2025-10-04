@@ -5,34 +5,34 @@ export const NotifierType = {
 };
 
 // Update models to match backend entities
-export interface HttpMonitorConfig {
-    id: number;
-    name: string;
-    url: string;
-    checkInterval: string; // e.g., "PT60S"
-    timeout: string;       // e.g., "PT5S"
-    notifierConfig: NotifierConfig;
-    ignoreTlsErrors: boolean;
-}
-
-export interface SyslogMonitorConfig {
-    id: number;
-    name: string;
-    sourceUrl: string;
-    noMessageInterval: string; // e.g., "PT1H"
-    lastMessageAt: string;     // ISO DateTime string
-    notifierConfig?: NotifierConfig;
-}
-
 export interface NotifierConfig {
-    id: number;
+    id?: number;
     name: string;
-    notifier_type: NotifierType;
+    notifier_type: 'TELEGRAM';
 }
 
 export interface TelegramNotifierConfig extends NotifierConfig {
     botToken: string;
     chatId: string;
+}
+
+export type MonitorType = 'HTTP' | 'SYSLOG';
+
+export type MonitorConfig = HttpMonitorConfig | SyslogMonitorConfig;
+
+export interface HttpMonitorConfig {
+    id?: number;
+    name: string;
+    monitor_type: 'HTTP';
+    url: string;
+    expectedStatus: number;
+}
+
+export interface SyslogMonitorConfig {
+    id?: number;
+    name: string;
+    monitor_type: 'SYSLOG';
+    sourceUrl: string;
 }
 
 export interface NotificationMessage {

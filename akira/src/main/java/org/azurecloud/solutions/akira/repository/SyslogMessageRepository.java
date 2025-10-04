@@ -9,7 +9,5 @@ import java.util.List;
 @Repository
 public interface SyslogMessageRepository extends JpaRepository<SyslogMessage, Long> {
 
-    List<SyslogMessage> findByMonitorId(Long monitorId);
-
     List<SyslogMessage> findByMessageContainingIgnoreCase(String term);
 }

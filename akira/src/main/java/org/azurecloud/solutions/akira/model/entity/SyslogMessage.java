@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -22,14 +21,16 @@ public class SyslogMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long monitorId;
 
-    @ManyToOne
-    private SyslogMonitorConfig source;
-    
-    /** The main content of the message, indexed for searching. */
+    private Long sourceId;
+
+    /**
+     * The main content of the message, indexed for searching.
+     */
     private String message;
 
-    /** The timestamp when the message was received by the application. */
+    /**
+     * The timestamp when the message was received by the application.
+     */
     private LocalDateTime receivedAt;
 }

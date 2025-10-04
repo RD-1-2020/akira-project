@@ -1,27 +1,27 @@
-<h1 mat-dialog-title>{{ isEdit ? 'Edit' : 'Create' }} Notifier</h1>
+<h1 mat-dialog-title>{{ notifier.id ? 'Edit' : 'Create' }} Notifier</h1>
 <div mat-dialog-content>
     <mat-form-field appearance="fill" class="full-width">
         <mat-label>Name</mat-label>
-        <input [(ngModel)]="data.name" matInput required>
+        <input [(ngModel)]="notifier.name" matInput required>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
         <mat-label>Notifier Type</mat-label>
-        <mat-select [(ngModel)]="data.notifier_type" [disabled]="isEdit" required>
+        <mat-select [(ngModel)]="notifier.notifier_type" [disabled]="notifier.id != null" required>
             <mat-option *ngFor="let type of notifierTypes" [value]="type">
                 {{ type }}
             </mat-option>
         </mat-select>
     </mat-form-field>
 
-    <div *ngIf="data.notifier_type === 'TELEGRAM'">
+    <div *ngIf="notifier.notifier_type === 'TELEGRAM'">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Bot Token</mat-label>
-            <input matInput [(ngModel)]="telegramData.botToken" required>
+            <input matInput [(ngModel)]="notifier.botToken" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Chat ID</mat-label>
-            <input matInput [(ngModel)]="telegramData.chatId" required>
+            <input matInput [(ngModel)]="notifier.chatId" required>
         </mat-form-field>
     </div>
 

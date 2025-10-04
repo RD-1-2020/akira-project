@@ -18,30 +18,24 @@
             <column name="chat_id" type="VARCHAR(255)"/>
         </createTable>
 
-        <createTable tableName="http_monitor_config">
+        <createTable tableName="monitor_config">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="monitor_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
             <column name="url" type="VARCHAR(255)"/>
+            <column name="expected_status" type="INT"/>
             <column name="check_interval" type="INTERVAL"/>
             <column name="timeout" type="INTERVAL"/>
             <column name="ignore_tls_errors" type="BOOLEAN"/>
-            <column name="notifier_config_id" type="BIGINT">
-                <constraints foreignKeyName="fk_http_monitor_notifier" references="notifier_config(id)"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="syslog_monitor_config">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(255)"/>
             <column name="source_url" type="VARCHAR(255)"/>
             <column name="no_message_interval" type="INTERVAL"/>
             <column name="last_message_at" type="TIMESTAMP"/>
             <column name="notifier_config_id" type="BIGINT">
-                <constraints foreignKeyName="fk_syslog_monitor_notifier" references="notifier_config(id)"/>
+                <constraints foreignKeyName="fk_monitor_notifier" references="notifier_config(id)"/>
             </column>
         </createTable>
 
@@ -63,7 +57,7 @@
             <column name="message" type="TEXT"/>
             <column name="received_at" type="TIMESTAMP"/>
             <column name="source_id" type="BIGINT">
-                <constraints foreignKeyName="fk_syslog_message_source" references="syslog_monitor_config(id)"/>
+                <constraints foreignKeyName="fk_syslog_message_source" references="monitor_config(id)"/>
             </column>
         </createTable>
     </changeSet>

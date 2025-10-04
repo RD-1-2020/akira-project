@@ -3,8 +3,6 @@ package org.azurecloud.solutions.akira.scheduler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.azurecloud.solutions.akira.service.config.HttpMonitorConfigService;
-import org.azurecloud.solutions.akira.service.config.SyslogMonitorConfigService;
 import org.azurecloud.solutions.akira.service.monitor.HttpMonitoringService;
 import org.azurecloud.solutions.akira.service.monitor.SelfMonitoringService;
 import org.azurecloud.solutions.akira.service.monitor.SyslogMonitoringService;

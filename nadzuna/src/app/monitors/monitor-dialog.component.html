@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>{{ monitor.id ? 'Edit Monitor' : 'Create Monitor' }}</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="monitor.name" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Type</mat-label>
+    <mat-select [(ngModel)]="monitor.monitor_type" [disabled]="!!monitor.id" required>
+      <mat-option *ngFor="let type of monitorTypes" [value]="type">
+        {{type}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="monitor.monitor_type === 'HTTP'">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>URL</mat-label>
+      <input matInput [(ngModel)]="monitor.url" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Expected Status</mat-label>
+      <input matInput type="number" [(ngModel)]="monitor.expectedStatus" required>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="monitor.monitor_type === 'SYSLOG'">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Source URL</mat-label>
+      <input matInput [(ngModel)]="monitor.sourceUrl" required>
+    </mat-form-field>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button (click)="save()" cdkFocusInitial color="primary" mat-raised-button>Save</button>
+</div>
+<style>
+    .full-width {
+        width: 100%;
+    }
+</style>

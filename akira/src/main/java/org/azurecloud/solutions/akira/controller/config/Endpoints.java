@@ -11,6 +11,5 @@ public final class Endpoints {
     public static final String NOTIFIERS = API_BASE + "/notifiers";
 
     // Monitors
-    public static final String MONITORS_HTTP = API_BASE + "/monitors/http";
-    public static final String MONITORS_SYSLOG = API_BASE + "/monitors/syslog";
+    public static final String MONITORS = API_BASE + "/monitors";
 }
