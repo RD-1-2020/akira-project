@@ -40,8 +40,8 @@ public class HttpMonitoringService implements AkiraMonitoring {
      */
     @Override
     public void check() {
-        log.debug("Checking all HTTP monitors...");
         List<MonitorConfig> configs = configRepository.findAll();
+        log.info("Found {} HTTP monitors to check", configs.size());
         for (MonitorConfig config : configs) {
             if (config instanceof HttpMonitorConfig) {
                 check((HttpMonitorConfig) config);
@@ -56,8 +56,6 @@ public class HttpMonitoringService implements AkiraMonitoring {
      */
     @Transactional
     public void check(HttpMonitorConfig config) {
-        log.info("Checking URL: {}", config.getUrl());
-        
         boolean checkSuccessful = false;
         String errorMessage = null;
         
@@ -71,14 +69,14 @@ public class HttpMonitoringService implements AkiraMonitoring {
 
             if (response.statusCode() == config.getExpectedStatus()) {
                 checkSuccessful = true;
-                log.info("URL {} is OK (status code: {})", config.getUrl(), response.statusCode());
+                log.info("[Monitor {}] URL {} is OK (status code: {})", config.getName(), config.getUrl(), response.statusCode());
             } else {
                 errorMessage = String.format("Status code: %d, expected: %d", response.statusCode(), config.getExpectedStatus());
-                log.warn("URL {} is DOWN - {}", config.getUrl(), errorMessage);
+                log.warn("[Monitor {}] URL {} is DOWN - {}", config.getName(), config.getUrl(), errorMessage);
             }
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            log.error("Failed to check URL {}: {}", config.getUrl(), errorMessage);
+            log.error("[Monitor {}] Failed to check URL {}: {}", config.getName(), config.getUrl(), errorMessage);
         }
         
         // Implement smart notification logic
