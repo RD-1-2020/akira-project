@@ -1,41 +1,67 @@
 <h1 mat-dialog-title>{{ monitor.id ? 'Edit Monitor' : 'Create Monitor' }}</h1>
-<div mat-dialog-content>
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Name</mat-label>
-    <input matInput [(ngModel)]="monitor.name" required>
-  </mat-form-field>
+<form #monitorForm="ngForm">
+    <div mat-dialog-content>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="monitor.name" required name="name">
+        </mat-form-field>
 
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Type</mat-label>
-    <mat-select [(ngModel)]="monitor.monitor_type" [disabled]="!!monitor.id" required>
-      <mat-option *ngFor="let type of monitorTypes" [value]="type">
-        {{type}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Type</mat-label>
+            <mat-select [(ngModel)]="monitor.monitor_type" [disabled]="!!monitor.id" required name="monitor_type">
+                <mat-option *ngFor="let type of monitorTypes" [value]="type">
+                    {{type}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
 
-  <div *ngIf="monitor.monitor_type === 'HTTP'">
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>URL</mat-label>
-      <input matInput [(ngModel)]="monitor.url" required>
-    </mat-form-field>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Expected Status</mat-label>
-      <input matInput type="number" [(ngModel)]="monitor.expectedStatus" required>
-    </mat-form-field>
-  </div>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Notifier</mat-label>
+            <mat-select [(ngModel)]="monitor.notifierConfig" name="notifierConfig">
+                <mat-option [value]="null">Не назначен</mat-option>
+                <mat-option *ngFor="let notifier of notifiers" [value]="notifier">
+                    {{notifier.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
 
-  <div *ngIf="monitor.monitor_type === 'SYSLOG'">
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Source URL</mat-label>
-      <input matInput [(ngModel)]="monitor.sourceUrl" required>
-    </mat-form-field>
-  </div>
-</div>
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button (click)="save()" cdkFocusInitial color="primary" mat-raised-button>Save</button>
-</div>
+        <div *ngIf="monitor.monitor_type === 'HTTP'">
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>URL</mat-label>
+                <input matInput [(ngModel)]="monitor.url" required name="url">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Expected Status</mat-label>
+                <input matInput type="number" [(ngModel)]="monitor.expectedStatus" required name="expectedStatus">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Timeout (seconds)</mat-label>
+                <input matInput type="number" [(ngModel)]="monitor.timeout" name="timeout" required>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="monitor.monitor_type === 'SYSLOG'">
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Source IP</mat-label>
+                <input matInput [(ngModel)]="monitor.sourceIp" required
+                       pattern="^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$"
+                       #sourceIp="ngModel" name="sourceIp"
+                       mask="099.099.099.099">
+                <mat-error *ngIf="sourceIp.hasError('pattern')">
+                    Please enter a valid IP address.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>No Message Interval (seconds)</mat-label>
+                <input matInput type="number" [(ngModel)]="monitor.noMessageInterval" name="noMessageInterval" required>
+            </mat-form-field>
+        </div>
+    </div>
+    <div mat-dialog-actions align="end">
+        <button mat-button (click)="onNoClick()">Cancel</button>
+        <button mat-button (click)="save()" cdkFocusInitial color="primary" mat-raised-button [disabled]="!monitorForm.form.valid">Save</button>
+    </div>
+</form>
 <style>
     .full-width {
         width: 100%;

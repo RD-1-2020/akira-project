@@ -1,8 +1,6 @@
 package org.azurecloud.solutions.akira.service.notifier;
 
-import org.azurecloud.solutions.akira.exception.AkiraException;
 import org.azurecloud.solutions.akira.model.entity.NotifierConfig;
-import org.azurecloud.solutions.akira.model.entity.NotifierType;
 import org.azurecloud.solutions.akira.model.entity.TelegramNotifierConfig;
 import org.azurecloud.solutions.akira.repository.NotificationMessageRepository;
 import org.springframework.stereotype.Component;

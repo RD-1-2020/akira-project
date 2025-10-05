@@ -6,6 +6,7 @@ import org.azurecloud.solutions.akira.model.entity.MonitorConfig;
 import org.azurecloud.solutions.akira.service.config.MonitorConfigService;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,18 +17,18 @@ public class MonitorConfigController {
     private final MonitorConfigService monitorConfigService;
 
     @GetMapping
-    public List<MonitorConfig> getAllMonitors() {
+    public List<MonitorConfig> getAll() {
         return monitorConfigService.getAll();
     }
 
     @PostMapping
-    public MonitorConfig createMonitor(@RequestBody MonitorConfig config) {
-        return monitorConfigService.create(config);
+    public MonitorConfig create(@RequestBody @Valid MonitorConfig monitorConfig) {
+        return monitorConfigService.create(monitorConfig);
     }
 
     @PutMapping("/{id}")
-    public MonitorConfig updateMonitor(@PathVariable Long id, @RequestBody MonitorConfig config) {
-        return monitorConfigService.update(id, config);
+    public MonitorConfig update(@PathVariable Long id, @RequestBody @Valid MonitorConfig monitorConfig) {
+        return monitorConfigService.update(id, monitorConfig);
     }
 
     @DeleteMapping("/{id}")

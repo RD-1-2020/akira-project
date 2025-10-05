@@ -7,7 +7,6 @@ import org.azurecloud.solutions.akira.model.entity.NotifierConfig;
 import org.azurecloud.solutions.akira.service.config.NotificationMessageService;
 import org.azurecloud.solutions.akira.service.config.NotifierConfigService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

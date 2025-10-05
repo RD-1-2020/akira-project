@@ -15,6 +15,23 @@
     <td mat-cell *matCellDef="let element"> {{element.monitor_type}} </td>
   </ng-container>
 
+  <!-- Status Column -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element">
+      <mat-icon [color]="getStatusColor(element)">
+        {{getStatusIcon(element)}}
+      </mat-icon>
+      <span class="status-text">{{getStatusText(element)}}</span>
+    </td>
+  </ng-container>
+
+  <!-- Notifier Column -->
+  <ng-container matColumnDef="notifier">
+    <th mat-header-cell *matHeaderCellDef> Notifier </th>
+    <td mat-cell *matCellDef="let element"> {{getNotifierName(element)}} </td>
+  </ng-container>
+
   <!-- Details Column -->
   <ng-container matColumnDef="details">
     <th mat-header-cell *matHeaderCellDef> Details </th>
@@ -37,3 +54,14 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
+<style>
+  .status-text {
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  
+  mat-icon {
+    vertical-align: middle;
+  }
+</style>

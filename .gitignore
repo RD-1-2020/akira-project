@@ -5,6 +5,7 @@ build/
 # IDE files
 .idea/
 .vscode/
+.cursor/
 *.iml
 *.iws
 *.ipr

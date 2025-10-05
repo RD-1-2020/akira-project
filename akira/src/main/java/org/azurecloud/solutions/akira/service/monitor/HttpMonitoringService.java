@@ -2,7 +2,8 @@ package org.azurecloud.solutions.akira.service.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.azurecloud.solutions.akira.model.entity.MonitorStatus;
 import org.azurecloud.solutions.akira.model.entity.HttpMonitorConfig;
 import org.azurecloud.solutions.akira.service.notifier.AkiraNotifier;
 import org.azurecloud.solutions.akira.service.notifier.NotifierFactory;
@@ -13,6 +14,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+
 import java.util.Locale;
 import org.azurecloud.solutions.akira.repository.MonitorConfigRepository;
 import org.azurecloud.solutions.akira.model.entity.MonitorConfig;
@@ -48,15 +51,16 @@ public class HttpMonitoringService implements AkiraMonitoring {
 
     /**
      * Performs a check for a single HTTP(S) endpoint configuration.
-     * Sends a notification if the endpoint is down or if an error occurs.
+     * Implements smart notification logic based on monitor status.
      * @param config The configuration of the endpoint to check.
      */
+    @Transactional
     public void check(HttpMonitorConfig config) {
         log.info("Checking URL: {}", config.getUrl());
-        if (config.getNotifierConfig() == null) {
-            return;
-        }
-        AkiraNotifier notifier = notifierFactory.createNotifier(config.getNotifierConfig());
+        
+        boolean checkSuccessful = false;
+        String errorMessage = null;
+        
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(config.getUrl()))
@@ -65,17 +69,70 @@ public class HttpMonitoringService implements AkiraMonitoring {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() != config.getExpectedStatus()) {
-                log.warn("URL {} is DOWN (status code: {}, expected: {})", config.getUrl(), response.statusCode(), config.getExpectedStatus());
-                String message = messageSource.getMessage("http.monitor.alert.down", new Object[]{config.getName(), config.getUrl(), response.statusCode()}, Locale.getDefault());
-                notifier.send(message);
-            } else {
+            if (response.statusCode() == config.getExpectedStatus()) {
+                checkSuccessful = true;
                 log.info("URL {} is OK (status code: {})", config.getUrl(), response.statusCode());
+            } else {
+                errorMessage = String.format("Status code: %d, expected: %d", response.statusCode(), config.getExpectedStatus());
+                log.warn("URL {} is DOWN - {}", config.getUrl(), errorMessage);
             }
         } catch (Exception e) {
-            log.error("Failed to check URL {}: {}", config.getUrl(), e.getMessage());
-            String message = messageSource.getMessage("http.monitor.alert.error", new Object[]{config.getName(), config.getUrl(), e.getMessage()}, Locale.getDefault());
-            notifier.send(message);
+            errorMessage = e.getMessage();
+            log.error("Failed to check URL {}: {}", config.getUrl(), errorMessage);
+        }
+        
+        // Implement smart notification logic
+        handleMonitorStatusChange(config, checkSuccessful, errorMessage);
+    }
+    
+    /**
+     * Handles monitor status changes and notifications based on the business logic:
+     * - If monitor is FAILED and check fails: log only, no notification
+     * - If monitor is ACTIVE and check fails: set to FAILED and send notification
+     * - If monitor is FAILED and check succeeds: set to ACTIVE and send recovery notification
+     */
+    private void handleMonitorStatusChange(HttpMonitorConfig config, boolean checkSuccessful, String errorMessage) {
+        MonitorStatus currentStatus = config.getStatus();
+        
+        if (checkSuccessful) {
+            // Check succeeded
+            if (currentStatus == MonitorStatus.FAILED) {
+                // Monitor recovered - send recovery notification
+                config.setStatus(MonitorStatus.ACTIVE);
+                configRepository.save(config);
+                
+                if (config.getNotifierConfig() != null) {
+                    AkiraNotifier notifier = notifierFactory.createNotifier(config.getNotifierConfig());
+                    String monitorName = config.getName();
+                    String message = messageSource.getMessage("http.monitor.recovery", 
+                            new Object[]{monitorName, config.getUrl()}, Locale.getDefault());
+                    log.debug("Recovery message: '{}' for monitor: '{}'", message, monitorName);
+                    notifier.send(message);
+                    log.info("Monitor '{}' recovered - notification sent", monitorName);
+                }
+            }
+            // If monitor was already ACTIVE, no action needed
+        } else {
+            // Check failed
+            if (currentStatus == MonitorStatus.ACTIVE) {
+                // Monitor failed - set status and send notification
+                config.setStatus(MonitorStatus.FAILED);
+                configRepository.save(config);
+                
+                if (config.getNotifierConfig() != null) {
+                    AkiraNotifier notifier = notifierFactory.createNotifier(config.getNotifierConfig());
+                    String monitorName = config.getName() != null ? config.getName() : "Unnamed Monitor";
+                    String message = messageSource.getMessage("http.monitor.alert.down", 
+                            new Object[]{monitorName, config.getUrl(), errorMessage}, Locale.getDefault());
+                    log.debug("Alert message: '{}' for monitor: '{}'", message, monitorName);
+                    notifier.send(message);
+                    log.info("Monitor '{}' failed - notification sent", monitorName);
+                }
+            } else {
+                // Monitor was already FAILED - just log, no notification
+                String monitorName = config.getName() != null ? config.getName() : "Unnamed Monitor";
+                log.debug("Monitor '{}' still failed - no notification sent", monitorName);
+            }
         }
     }
 }

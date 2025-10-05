@@ -18,6 +18,8 @@ export interface TelegramNotifierConfig extends NotifierConfig {
 
 export type MonitorType = 'HTTP' | 'SYSLOG';
 
+export type MonitorStatus = 'ACTIVE' | 'FAILED';
+
 export type MonitorConfig = HttpMonitorConfig | SyslogMonitorConfig;
 
 export interface HttpMonitorConfig {
@@ -26,13 +28,19 @@ export interface HttpMonitorConfig {
     monitor_type: 'HTTP';
     url: string;
     expectedStatus: number;
+    timeout?: number;
+    status: MonitorStatus;
+    notifierConfig?: NotifierConfig;
 }
 
 export interface SyslogMonitorConfig {
     id?: number;
     name: string;
     monitor_type: 'SYSLOG';
-    sourceUrl: string;
+    sourceIp: string;
+    noMessageInterval?: number;
+    status: MonitorStatus;
+    notifierConfig?: NotifierConfig;
 }
 
 export interface NotificationMessage {

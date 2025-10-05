@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface MonitorConfigRepository extends JpaRepository<MonitorConfig, Long> {
 
-    @Query("SELECT s FROM SyslogMonitorConfig s WHERE s.sourceUrl = :sourceUrl")
-    Optional<SyslogMonitorConfig> findBySourceUrl(String sourceUrl);
+    @Query("SELECT s FROM SyslogMonitorConfig s WHERE s.sourceIp = :sourceIp")
+    Optional<SyslogMonitorConfig> findBySourceIp(String sourceIp);
 }

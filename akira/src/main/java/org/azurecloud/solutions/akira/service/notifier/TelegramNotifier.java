@@ -1,9 +1,7 @@
 package org.azurecloud.solutions.akira.service.notifier;
 
 import lombok.extern.slf4j.Slf4j;
-import org.azurecloud.solutions.akira.exception.AkiraException;
 import org.azurecloud.solutions.akira.model.entity.NotificationMessage;
-import org.azurecloud.solutions.akira.model.entity.NotifierConfig;
 import org.azurecloud.solutions.akira.model.entity.TelegramNotifierConfig;
 import org.azurecloud.solutions.akira.repository.NotificationMessageRepository;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
