@@ -41,7 +41,7 @@ public class HttpMonitoringService implements AkiraMonitoring {
     @Override
     public void check() {
         List<MonitorConfig> configs = configRepository.findAll();
-        log.info("Found {} HTTP monitors to check", configs.size());
+        log.debug("Found {} HTTP monitors to check", configs.size());
         for (MonitorConfig config : configs) {
             if (config instanceof HttpMonitorConfig) {
                 check((HttpMonitorConfig) config);
@@ -69,7 +69,7 @@ public class HttpMonitoringService implements AkiraMonitoring {
 
             if (response.statusCode() == config.getExpectedStatus()) {
                 checkSuccessful = true;
-                log.info("[Monitor {}] URL {} is OK (status code: {})", config.getName(), config.getUrl(), response.statusCode());
+                log.debug("[Monitor {}] URL {} is OK (status code: {})", config.getName(), config.getUrl(), response.statusCode());
             } else {
                 errorMessage = String.format("Status code: %d, expected: %d", response.statusCode(), config.getExpectedStatus());
                 log.warn("[Monitor {}] URL {} is DOWN - {}", config.getName(), config.getUrl(), errorMessage);
