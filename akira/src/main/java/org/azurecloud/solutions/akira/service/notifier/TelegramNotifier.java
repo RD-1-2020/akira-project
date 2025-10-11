@@ -51,7 +51,7 @@ public class TelegramNotifier extends TelegramLongPollingBot implements AkiraNot
     @Override
     public String getBotUsername() {
         // Not strictly needed for sending, but required by the abstract class.
-        return "AnkoMonitorBot";
+        return "AkiraMonitorBot";
     }
 
     @Override

@@ -3,7 +3,7 @@
 
 !define DEPS ../dependencies.toml
 
-title Component Diagram for Anko Project
+title Component Diagram for Akira Project
 
 ContainerDb(db, "PostgreSQL", "Database", "Stores all application data.")
 

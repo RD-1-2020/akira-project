@@ -1,5 +1,5 @@
 
-== Anko Project
+== Akira Project
 
 Simple project for monitoring and notifications about fails.
 
@@ -38,7 +38,7 @@ To run the project locally, you need Docker and Java 24 installed.
 
 2.  **Run the application:**
     
-    You can run the `AnkoApplication` main class from your IDE or use the Gradle wrapper:
+    You can run the `AkiraApplication` main class from your IDE or use the Gradle wrapper:
     [source,bash]
     ----
     ./gradlew bootRun

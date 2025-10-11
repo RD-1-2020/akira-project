@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * The main entry point for the Anko Spring Boot application.
+ * The main entry point for the Akira Spring Boot application.
  * Enables scheduling for background tasks like monitoring.
  */
 @EnableScheduling

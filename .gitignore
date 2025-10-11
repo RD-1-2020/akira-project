@@ -20,6 +20,7 @@ Thumbs.db
 
 # Frontend dependencies and build artifacts
 **/node_modules/
+package-lock.json
 **/dist/
 **/.angular/
 npm-debug.log
