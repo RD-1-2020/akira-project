@@ -122,7 +122,7 @@ public class SyslogMonitoringService implements AkiraMonitoring {
     }
 
     private void saveMessage(SyslogMonitorConfig sourceConfig, String message) {
-        log.info("Received syslog message from [{}]: {}", sourceConfig.getSourceIp(), message);
+        log.trace("Received syslog message from [{}]: {}", sourceConfig.getSourceIp(), message);
         SyslogMessage syslogMessage = new SyslogMessage();
         syslogMessage.setSourceId(sourceConfig.getId());
         syslogMessage.setMessage(message);

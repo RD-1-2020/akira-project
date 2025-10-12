@@ -45,8 +45,7 @@
                 <mat-label>Source IP</mat-label>
                 <input matInput [(ngModel)]="monitor.sourceIp" required
                        pattern="^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$"
-                       #sourceIp="ngModel" name="sourceIp"
-                       mask="099.099.099.099">
+                       #sourceIp="ngModel" name="sourceIp">
                 <mat-error *ngIf="sourceIp.hasError('pattern')">
                     Please enter a valid IP address.
                 </mat-error>
