@@ -1,5 +1,12 @@
-<h2>Monitors</h2>
-<button mat-raised-button color="primary" (click)="openDialog()">Create New Monitor</button>
+<div class="header-actions">
+  <h2>Monitors</h2>
+  <div class="button-group">
+    <button mat-icon-button color="primary" (click)="loadMonitors()" matTooltip="Refresh">
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button mat-raised-button color="primary" (click)="openDialog()">Create New Monitor</button>
+  </div>
+</div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -54,14 +61,3 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-
-<style>
-  .status-text {
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-  
-  mat-icon {
-    vertical-align: middle;
-  }
-</style>

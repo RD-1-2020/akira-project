@@ -5,7 +5,7 @@ import {NotificationMessage} from './models';
 
 @Injectable({providedIn: 'root'})
 export class NotificationMessageService {
-    private apiUrl = '/api/messages';
+    private apiUrl = '/api/notifiers/messages';
 
     constructor(private http: HttpClient) {
     }

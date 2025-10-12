@@ -55,11 +55,11 @@ export class MonitorsComponent implements OnInit {
   }
 
   getNotifierName(monitor: MonitorConfig): string {
-    return monitor.notifierConfig?.name || 'Не назначен';
+    return monitor.notifierConfig?.name || 'Not assigned';
   }
 
   getStatusText(monitor: MonitorConfig): string {
-    return monitor.status === 'ACTIVE' ? 'Активен' : 'Неисправен';
+    return monitor.status === 'ACTIVE' ? 'Active' : 'Failed';
   }
 
   getStatusIcon(monitor: MonitorConfig): string {

@@ -5,7 +5,7 @@ public final class Endpoints {
     private Endpoints() {}
 
     public static final String API_BASE = "/api";
-    public static final String MESSAGES_SUFFIX = "/messages";
+    public static final String MESSAGES = "/messages";
 
     // Notifiers & Notifications
     public static final String NOTIFIERS = API_BASE + "/notifiers";

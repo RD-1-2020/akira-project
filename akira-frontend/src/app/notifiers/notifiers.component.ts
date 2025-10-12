@@ -9,6 +9,7 @@ import {MaterialModule} from '../material.module';
 @Component({
     selector: 'app-notifiers',
     templateUrl: './notifiers.component.html',
+    styleUrls: ['./notifiers.component.scss'],
     standalone: true,
     imports: [CommonModule, MaterialModule],
 })

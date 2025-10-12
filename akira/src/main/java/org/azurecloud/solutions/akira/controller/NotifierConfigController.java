@@ -48,22 +48,22 @@ public class NotifierConfigController {
 
     // == Notification Messages ==
 
-    @GetMapping(Endpoints.MESSAGES_SUFFIX)
+    @GetMapping(Endpoints.MESSAGES)
     public List<NotificationMessage> getAllMessages() {
         return notificationMessageService.getAll();
     }
 
-    @GetMapping(Endpoints.MESSAGES_SUFFIX + "/{id}")
+    @GetMapping(Endpoints.MESSAGES + "/{id}")
     public NotificationMessage getMessageById(@PathVariable Long id) {
         return notificationMessageService.getById(id);
     }
 
-    @PostMapping(Endpoints.MESSAGES_SUFFIX + "/{id}/retry")
+    @PostMapping(Endpoints.MESSAGES + "/{id}/retry")
     public NotificationMessage retryMessage(@PathVariable Long id) {
         return notificationMessageService.retry(id);
     }
 
-    @DeleteMapping(Endpoints.MESSAGES_SUFFIX + "/{id}")
+    @DeleteMapping(Endpoints.MESSAGES + "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessage(@PathVariable Long id) {
         notificationMessageService.delete(id);

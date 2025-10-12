@@ -1,5 +1,10 @@
 <div class="container">
-    <h1>Notifications</h1>
+    <div class="header-actions">
+        <h1>Notifications</h1>
+        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="Refresh">
+            <mat-icon>refresh</mat-icon>
+        </button>
+    </div>
 
     <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
 

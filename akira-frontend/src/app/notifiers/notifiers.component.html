@@ -1,8 +1,12 @@
 <div class="container">
-    <h1>Notifiers</h1>
-
-    <div class="actions">
-        <button (click)="openDialog()" color="primary" mat-flat-button>Create New Notifier</button>
+    <div class="header-actions">
+        <h1>Notifiers</h1>
+        <div class="button-group">
+            <button mat-icon-button color="primary" (click)="loadNotifiers()" matTooltip="Refresh">
+                <mat-icon>refresh</mat-icon>
+            </button>
+            <button (click)="openDialog()" color="primary" mat-flat-button>Create New Notifier</button>
+        </div>
     </div>
 
     <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
