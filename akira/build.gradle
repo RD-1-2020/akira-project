@@ -31,13 +31,13 @@ dependencies {
 }
 
 tasks.register('npmInstall', Exec) {
-    workingDir '../nadzuna'
+    workingDir '../akira-frontend'
     commandLine 'npm.cmd', 'install'
 }
 
 tasks.register('buildFrontend', Exec) {
     dependsOn npmInstall
-    workingDir '../nadzuna'
+    workingDir '../akira-frontend'
     commandLine 'npm.cmd', 'run', 'build'
 }
 
@@ -47,13 +47,13 @@ processResources.dependsOn buildFrontend
 sourceSets {
     main {
         resources {
-            srcDirs "../nadzuna/dist/nadzuna/browser"
+            srcDirs "../akira-frontend/dist/akira-frontend/browser"
         }
     }
 }
 
 processResources {
-    from("../nadzuna/dist/nadzuna/browser") {
+    from("../akira-frontend/dist/akira-frontend/browser") {
         into "static"
     }
 }

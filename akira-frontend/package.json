@@ -1,6 +1,6 @@
 {
-  "name": "nadzuna",
-  "version": "0.0.1",
+  "name": "akira-frontend",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "ng": "ng",

@@ -9,11 +9,11 @@ ContainerDb(db, "PostgreSQL", "Database", "Stores all application data.")
 
 Container_Boundary(akira_b, "Akira Service") {
     Component(akira, "Akira", "Java, Spring Boot", "Main backend service providing the core logic and API.")
-    Component(nadzuna, "Nadzuna", "Angular", "Single Page Application providing the user interface.")
+    Component(akira-frontend, "Akira-frontend", "Angular", "Single Page Application providing the user interface.")
     Component(monitoring, "Monitoring", "Java, Spring", "Handles HTTP(S), Syslog, and Self monitoring.")
     Component(notifications, "Notifications", "Java, Spring", "Manages sending notifications (e.g., Telegram).")
 
-    Rel(nadzuna, akira, "Uses REST API", "HTTPS")
+    Rel(akira-frontend, akira, "Uses REST API", "HTTPS")
     Rel(akira, monitoring, "Uses")
     Rel(akira, notifications, "Uses")
 }
