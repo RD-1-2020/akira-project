@@ -1,0 +1,42 @@
+monitoring:
+  http:
+    scheduler:
+      rate:
+        ms: 60000
+  self:
+    connectivity:
+      hosts:
+        - 8.8.8.8
+        - 8.8.4.4
+        - 1.1.1.1
+        - 1.0.0.1
+    scheduler:
+      rate:
+        ms: 30000
+  syslog:
+    scheduler:
+      rate:
+        ms: 60000
+server:
+  port: 8443
+  ssl:
+    certificate: classpath:/certs/server.crt
+    certificate-private-key: classpath:/certs/server.key
+    enabled: true
+spring:
+  application:
+    name: akira
+  datasource:
+    password: akira
+    url: jdbc:postgresql://localhost:5432/akira?sslmode=require
+    username: akira
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  security:
+    user:
+      name: admin
+      password: admin

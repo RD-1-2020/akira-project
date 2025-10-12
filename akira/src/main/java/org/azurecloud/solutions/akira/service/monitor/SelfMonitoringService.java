@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.util.Locale;
+import java.util.Set;
 
 import org.azurecloud.solutions.akira.model.entity.NotifierConfig;
 import org.azurecloud.solutions.akira.repository.NotifierConfigRepository;
@@ -27,8 +28,8 @@ public class SelfMonitoringService implements AkiraMonitoring {
     private final NotifierConfigRepository notifierConfigRepository;
     private final MessageSource messageSource;
 
-    @Value("${monitoring.self.connectivity.host:8.8.8.8}")
-    private String connectivityCheckHost;
+    @Value("${monitoring.self.connectivity.hosts:8.8.8.8}")
+    private Set<String> connectivityCheckHosts;
 
     @Value("${monitoring.self.connectivity.timeout.ms:5000}")
     private int connectivityCheckTimeoutMs;
@@ -71,12 +72,17 @@ public class SelfMonitoringService implements AkiraMonitoring {
     }
 
     private boolean isInternetAvailable() {
-        try {
-            InetAddress address = InetAddress.getByName(connectivityCheckHost);
-            return address.isReachable(connectivityCheckTimeoutMs);
-        } catch (Exception e) {
-            log.error("Connectivity check failed: {}", e.getMessage());
-            return false;
+        boolean isAvailable = false;
+        for (String host : connectivityCheckHosts) {
+            try {
+                InetAddress address = InetAddress.getByName(host);
+                isAvailable |= address.isReachable(connectivityCheckTimeoutMs);
+            } catch (Exception e) {
+                log.error("Connectivity check failed: {}", e.getMessage());
+                continue;
+            }
         }
+
+        return isAvailable;        
     }
 }

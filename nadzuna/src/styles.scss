@@ -28,9 +28,9 @@ $gruvbox-primary-palette-map: map.merge(mat.$m2-orange-palette, (
   ))
 ));
 
-$gruvbox-accent-palette-map: map.merge(mat.$m2-blue-grey-palette, (
-  500: $gruvbox-dark-blue,
-  contrast: map.merge(map.get(mat.$m2-blue-grey-palette, contrast), (
+$gruvbox-accent-palette-map: map.merge(mat.$m2-purple-palette, (
+  500: $gruvbox-dark-purple,
+  contrast: map.merge(map.get(mat.$m2-purple-palette, contrast), (
     500: #ffffff
   ))
 ));
