@@ -6,13 +6,15 @@ import { MonitorConfig, HttpMonitorConfig, SyslogMonitorConfig, NotifierConfig }
 import { MonitorConfigService } from '../monitor-config.service';
 import { NotifierConfigService } from '../notifier-config.service';
 import { MonitorDialogComponent } from './monitor-dialog.component';
+import { SyslogMessagesDialogComponent } from './syslog-messages-dialog.component';
+import { SyslogStatsChartComponent } from './syslog-stats-chart.component';
 
 @Component({
   selector: 'app-monitors',
   templateUrl: './monitors.component.html',
   styleUrls: ['./monitors.component.scss'],
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, SyslogStatsChartComponent],
 })
 export class MonitorsComponent implements OnInit {
   displayedColumns: string[] = ['name', 'type', 'status', 'notifier', 'details', 'actions'];
@@ -89,5 +91,18 @@ export class MonitorsComponent implements OnInit {
         this.loadMonitors();
       });
     }
+  }
+
+  openSyslogMessages(monitor: MonitorConfig): void {
+    if (monitor.monitor_type === 'SYSLOG' && monitor.id) {
+      this.dialog.open(SyslogMessagesDialogComponent, {
+        width: '1400px',
+        data: { sourceId: monitor.id }
+      });
+    }
+  }
+
+  isSyslogMonitor(monitor: MonitorConfig): boolean {
+    return monitor.monitor_type === 'SYSLOG';
   }
 }

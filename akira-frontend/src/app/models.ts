@@ -51,3 +51,23 @@ export interface NotificationMessage {
     createdAt: string; // ISO DateTime string
     updatedAt: string; // ISO DateTime string
 }
+
+export interface SyslogMessage {
+    id: number;
+    sourceId: number;
+    message: string;
+    receivedAt: string; // ISO DateTime string
+}
+
+export interface SyslogMessageStats {
+    hourlyStats: HourlyStats[];
+    mean: number;
+    standardDeviation: number;
+}
+
+export interface HourlyStats {
+    hour: number;
+    count: number;
+    isAnomaly?: boolean;
+    anomaly?: boolean; // Jackson сериализует isAnomaly как anomaly
+}

@@ -1,0 +1,41 @@
+<div class="chart-container">
+  <h3>Syslog Events by Hour (Today)</h3>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="!loading && stats" class="chart">
+    <div class="chart-bars">
+      <div *ngFor="let hourlyStat of stats.hourlyStats" class="bar-container">
+        <div class="bar-wrapper">
+          <div 
+            class="bar" 
+            [style.height.%]="getBarHeight(hourlyStat.count)"
+            [style.background-color]="getBarColor(hourlyStat)"
+            [title]="formatHour(hourlyStat.hour) + ': ' + hourlyStat.count + ' events'">
+          </div>
+        </div>
+        <div class="hour-label">{{formatHour(hourlyStat.hour)}}</div>
+      </div>
+    </div>
+    <div class="chart-info" *ngIf="stats">
+      <div class="info-item">
+        <span class="info-label">Mean:</span>
+        <span class="info-value">{{stats.mean.toFixed(2)}}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Std Dev:</span>
+        <span class="info-value">{{stats.standardDeviation.toFixed(2)}}</span>
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color" [style.background-color]="normalColor"></div>
+          <span>Normal</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" [style.background-color]="anomalyColor"></div>
+          <span>Anomaly (>3σ)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!loading && !stats" class="no-data">No data available</div>
+</div>
+

@@ -12,4 +12,7 @@ public final class Endpoints {
 
     // Monitors
     public static final String MONITORS = API_BASE + "/monitors";
+
+    // Syslog Messages
+    public static final String SYSLOG_MESSAGES = API_BASE + "/syslog-messages";
 }
