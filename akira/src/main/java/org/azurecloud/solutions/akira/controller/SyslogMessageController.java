@@ -35,10 +35,15 @@ public class SyslogMessageController {
             endDateTime = Instant.ofEpochMilli(endDate).atZone(ZoneId.systemDefault()).toLocalDateTime();
         }
         
-        if (startDateTime != null || endDateTime != null) {
+        if (startDateTime != null && endDateTime != null) {
             return syslogMessageRepository.findBySourceIdAndDateRangeOrderByReceivedAtDesc(sourceId, startDateTime, endDateTime);
+        } else if (startDateTime != null) {
+            return syslogMessageRepository.findBySourceIdAndStartDateOrderByReceivedAtDesc(sourceId, startDateTime);
+        } else if (endDateTime != null) {
+            return syslogMessageRepository.findBySourceIdAndEndDateOrderByReceivedAtDesc(sourceId, endDateTime);
+        } else {
+            return syslogMessageRepository.findBySourceIdOrderByReceivedAtDesc(sourceId);
         }
-        return syslogMessageRepository.findBySourceIdOrderByReceivedAtDesc(sourceId);
     }
 
     @GetMapping("/stats")
