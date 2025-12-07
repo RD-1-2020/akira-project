@@ -34,6 +34,9 @@ public class SelfMonitoringService implements AkiraMonitoring {
     @Value("${monitoring.self.connectivity.timeout.ms:5000}")
     private int connectivityCheckTimeoutMs;
 
+    @Value("${monitoring.self.connectivity.retry.count:3}")
+    private int connectivityRetryCount;
+
     private boolean lastCheckStatus = true; // Assume connection is OK at startup
 
     // This needs a default notifier. Let's assume there's one with a known ID=1.
@@ -72,17 +75,29 @@ public class SelfMonitoringService implements AkiraMonitoring {
     }
 
     private boolean isInternetAvailable() {
-        boolean isAvailable = false;
-        for (String host : connectivityCheckHosts) {
-            try {
-                InetAddress address = InetAddress.getByName(host);
-                isAvailable |= address.isReachable(connectivityCheckTimeoutMs);
-            } catch (Exception e) {
-                log.error("Connectivity check failed: {}", e.getMessage());
-                continue;
+        for (int attempt = 1; attempt <= connectivityRetryCount; attempt++) {
+            boolean isAvailable = false;
+            for (String host : connectivityCheckHosts) {
+                try {
+                    InetAddress address = InetAddress.getByName(host);
+                    isAvailable |= address.isReachable(connectivityCheckTimeoutMs);
+                    if (isAvailable) {
+                        log.debug("Internet connectivity check succeeded on attempt {} for host {}", attempt, host);
+                        return true;
+                    }
+                } catch (Exception e) {
+                    log.debug("Connectivity check failed for host {} on attempt {}: {}", host, attempt, e.getMessage());
+                    continue;
+                }
+            }
+            
+            if (attempt < connectivityRetryCount) {
+                log.debug("Internet connectivity check failed on attempt {}/{}, retrying...", attempt, connectivityRetryCount);
+            } else {
+                log.debug("Internet connectivity check failed after {} attempts", connectivityRetryCount);
             }
         }
 
-        return isAvailable;        
+        return false;        
     }
 }
