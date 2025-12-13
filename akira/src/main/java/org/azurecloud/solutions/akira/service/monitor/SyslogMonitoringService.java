@@ -8,6 +8,7 @@ import org.azurecloud.solutions.akira.service.notifier.NotifierFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import org.azurecloud.solutions.akira.model.entity.SyslogMessage;
 import org.azurecloud.solutions.akira.model.entity.SyslogMonitorConfig;
 import org.azurecloud.solutions.akira.model.entity.MonitorConfig;
@@ -18,7 +19,6 @@ import org.azurecloud.solutions.akira.repository.MonitorConfigRepository;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 import java.util.Locale;
 
 /**
@@ -47,9 +47,10 @@ public class SyslogMonitoringService implements AkiraMonitoring {
             }
         }
     }
-    
+
     /**
-     * Handles syslog monitor status changes and notifications based on the business logic:
+     * Handles syslog monitor status changes and notifications based on the business
+     * logic:
      * - If monitor is ACTIVE and becomes stale: set to FAILED and send notification
      * - If monitor is FAILED and becomes stale: log only, no notification
      */
@@ -60,65 +61,69 @@ public class SyslogMonitoringService implements AkiraMonitoring {
 
         Duration timeSinceLastMessage = Duration.between(syslogConfig.getLastMessageAt(), now);
         boolean isStale = timeSinceLastMessage.compareTo(syslogConfig.getNoMessageInterval()) > 0;
-        
-        if (isStale) {
-            // Monitor is stale
-            if (syslogConfig.getStatus() == MonitorStatus.ACTIVE) {
-                // Monitor just became stale - send notification and update status
-                syslogConfig.setStatus(MonitorStatus.FAILED);
-                configRepository.save(syslogConfig);
-                
-                log.warn("Syslog source '{}' ({}) is stale. Last message was at {}.",
-                        syslogConfig.getName(), syslogConfig.getSourceIp(), syslogConfig.getLastMessageAt());
-                
-                AkiraNotifier notifier = notifierFactory.createNotifier(syslogConfig.getNotifierConfig());
-                String message = messageSource.getMessage("syslog.monitor.alert.stale",
-                        new Object[]{syslogConfig.getName(), syslogConfig.getSourceIp(), syslogConfig.getNoMessageInterval().toString()},
-                        Locale.getDefault());
-                notifier.send(message);
-                log.info("Syslog monitor '{}' failed - notification sent", syslogConfig.getName());
-            } else {
-                // Monitor was already FAILED - just log, no notification
-                log.debug("Syslog monitor '{}' still stale - no notification sent", syslogConfig.getName());
-            }
+
+        if (!isStale) {
+            log.trace("Syslog monitor '{}' ({}) is not stale. Last message was at {}.",
+                    syslogConfig.getName(), syslogConfig.getSourceIp(), syslogConfig.getLastMessageAt());
+            return;
         }
+
+        if (syslogConfig.getStatus() == MonitorStatus.FAILED) {
+            log.trace("Syslog monitor '{}' is already FAILED - no notification sent", syslogConfig.getName());
+            return;
+        }
+
+        // Monitor just became stale - send notification and update status
+        syslogConfig.setStatus(MonitorStatus.FAILED);
+        configRepository.save(syslogConfig);
+
+        log.debug("Syslog monitor '{}' ({}) is stale. Last message was at {}.",
+                syslogConfig.getName(), syslogConfig.getSourceIp(), syslogConfig.getLastMessageAt());
+
+        AkiraNotifier notifier = notifierFactory.createNotifier(syslogConfig.getNotifierConfig());
+        String message = messageSource.getMessage("syslog.monitor.alert.stale",
+                new Object[]{syslogConfig.getName(), syslogConfig.getSourceIp(),
+                        syslogConfig.getNoMessageInterval().toString()},
+                Locale.getDefault());
+        notifier.send(message);
+        log.info("Syslog monitor '{}' failed - notification sent", syslogConfig.getName());
     }
 
     @Transactional
     public void processMessage(String sourceAddress, String rawMessage) {
-        Optional<SyslogMonitorConfig> configOpt = configRepository.findBySourceIp(sourceAddress);
-        if (configOpt.isEmpty()) {
-            log.warn("Received syslog message from unconfigured source: {}", sourceAddress);
+        var syslogMonitorOpt = configRepository.findBySourceIp(sourceAddress);
+        if (syslogMonitorOpt.isEmpty()) {
+            log.debug("Received syslog message from unconfigured source: {}", sourceAddress);
             return;
         }
-        
-        SyslogMonitorConfig config = configOpt.get();
-        
+
+        SyslogMonitorConfig syslogMonitor = syslogMonitorOpt.get();
+
         // Check if this is a recovery (monitor was FAILED and now receiving messages)
-        boolean wasFailed = config.getStatus() == MonitorStatus.FAILED;
-        
-        config.setLastMessageAt(LocalDateTime.now());
-        
+        boolean wasFailed = syslogMonitor.getStatus() == MonitorStatus.FAILED;
+
+        syslogMonitor.setLastMessageAt(LocalDateTime.now());
+        saveMessage(syslogMonitor, rawMessage);
+
         if (wasFailed) {
             // Monitor recovered - send recovery notification
-            config.setStatus(MonitorStatus.ACTIVE);
-            configRepository.save(config);
-            
-            if (config.getNotifierConfig() != null) {
-                AkiraNotifier notifier = notifierFactory.createNotifier(config.getNotifierConfig());
-                String monitorName = config.getName() != null ? config.getName() : "Unnamed Monitor";
-                String message = messageSource.getMessage("syslog.monitor.recovery",
-                        new Object[]{monitorName, config.getSourceIp()}, Locale.getDefault());
-                log.debug("Syslog recovery message: '{}' for monitor: '{}'", message, monitorName);
-                notifier.send(message);
-                log.info("Syslog monitor '{}' recovered - notification sent", monitorName);
+            syslogMonitor.setStatus(MonitorStatus.ACTIVE);
+
+            String monitorName = syslogMonitor.getName();
+            if (syslogMonitor.getNotifierConfig() == null) {
+                log.warn("Syslog monitor '{}' has no notifier config", monitorName);
+                return;
             }
-        } else {
-            // Monitor was already active - just save the message
-            configRepository.save(config);
+
+            AkiraNotifier notifier = notifierFactory.createNotifier(syslogMonitor.getNotifierConfig());
+            String message = messageSource.getMessage("syslog.monitor.recovery",
+                    new Object[]{monitorName, syslogMonitor.getSourceIp()}, Locale.getDefault());
+            log.debug("Syslog recovery message: '{}' for monitor: '{}'", message, monitorName);
+            notifier.send(message);
+            log.info("Syslog monitor '{}' recovered - notification sent", monitorName);
         }
 
-        saveMessage(config, rawMessage);
+        configRepository.save(syslogMonitor);
     }
 
     private void saveMessage(SyslogMonitorConfig sourceConfig, String message) {
@@ -128,15 +133,5 @@ public class SyslogMonitoringService implements AkiraMonitoring {
         syslogMessage.setMessage(message);
         syslogMessage.setReceivedAt(LocalDateTime.now());
         syslogMessageRepository.save(syslogMessage);
-    }
-    
-    /**
-     * Searches for Syslog messages.
-     * @param term The text to search for in the message content.
-     * @return A list of matching {@link SyslogMessage}s.
-     */
-    @Transactional(readOnly = true)
-    public List<SyslogMessage> searchMessages(Long sourceId, String term) {
-        return syslogMessageRepository.findByMessageContainingIgnoreCase(term);
     }
 }

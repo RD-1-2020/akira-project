@@ -2,6 +2,7 @@ plugins {
     id 'java'
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.jib)
 }
 
 group = 'org.azurecloud.solutions'
@@ -60,4 +61,27 @@ processResources {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = 'eclipse-temurin:24-jre-alpine'
+    }
+    to {
+        def dockerUsername = project.findProperty('docker.username') ?: System.getenv('DOCKER_USERNAME') ?: 'akira'
+        def imageName = project.findProperty('docker.image') ?: 'akira'
+        image = "${dockerUsername}/${imageName}"
+        tags = [project.version, 'latest']
+        auth {
+            username = project.findProperty('docker.username') ?: System.getenv('DOCKER_USERNAME') ?: ""
+            password = project.findProperty('docker.password') ?: System.getenv('DOCKER_PASSWORD') ?: ""
+        }
+    }
+    container {
+        jvmFlags = ['-Djava.security.egd=file:/dev/./urandom']
+        ports = ['8443']
+        user = 'spring:spring'
+        workingDirectory = '/app'
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+    }
 }

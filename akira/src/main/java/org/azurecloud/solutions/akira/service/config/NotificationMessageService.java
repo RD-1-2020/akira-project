@@ -6,6 +6,7 @@ import org.azurecloud.solutions.akira.exception.AkiraErrorCode;
 import org.azurecloud.solutions.akira.exception.AkiraException;
 import org.azurecloud.solutions.akira.repository.NotificationMessageRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,16 +18,16 @@ public class NotificationMessageService {
 
     private final NotificationMessageRepository repository;
 
-    public List<NotificationMessage> getAll() {
+    public @NonNull List<NotificationMessage> getAll() {
         return repository.findAll();
     }
 
-    public NotificationMessage getById(Long id) {
+    public NotificationMessage getById(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND));
     }
 
-    public NotificationMessage retry(Long id) {
+    public NotificationMessage retry(@NonNull Long id) {
         NotificationMessage message = getById(id);
         if (message.getStatus() != NotificationMessage.Status.FAILED) {
             throw new AkiraException(AkiraErrorCode.VALIDATION_ERROR, HttpStatus.BAD_REQUEST,
@@ -37,7 +38,7 @@ public class NotificationMessageService {
         return repository.save(message);
     }
 
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         if (!repository.existsById(id)) {
             throw new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND);
         }

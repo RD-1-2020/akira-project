@@ -11,9 +11,6 @@ import java.util.List;
 
 @Repository
 public interface SyslogMessageRepository extends JpaRepository<SyslogMessage, Long> {
-
-    List<SyslogMessage> findByMessageContainingIgnoreCase(String term);
-
     List<SyslogMessage> findBySourceIdOrderByReceivedAtDesc(Long sourceId);
 
     @Query(value = "SELECT * FROM syslog_message s " +

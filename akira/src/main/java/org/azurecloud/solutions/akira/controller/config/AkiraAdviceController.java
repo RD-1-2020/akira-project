@@ -3,6 +3,7 @@ package org.azurecloud.solutions.akira.controller.config;
 import org.azurecloud.solutions.akira.exception.AkiraException;
 import org.azurecloud.solutions.akira.model.dto.AkiraErrorDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -19,7 +20,7 @@ public class AkiraAdviceController {
      * @return A ResponseEntity containing the AkiraErrorDto.
      */
     @ExceptionHandler(AkiraException.class)
-    public ResponseEntity<AkiraErrorDto> handleAkiraException(AkiraException e) {
+    public ResponseEntity<AkiraErrorDto> handleAkiraException(@NonNull AkiraException e) {
         AkiraErrorDto errorDto = new AkiraErrorDto(e.getErrorCode().getCode(), e.getMessage());
         return new ResponseEntity<>(errorDto, e.getHttpStatus());
     }

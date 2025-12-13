@@ -2,6 +2,7 @@ package org.azurecloud.solutions.akira.service.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,8 @@ public class SelfMonitoringService implements AkiraMonitoring {
         // This is a temporary and inefficient way to get the notifier.
         // It should be cached.
         NotifierConfig config = notifierConfigRepository.findById(SELF_MONITORING_NOTIFIER_ID)
-            .orElse(null);
-        if(config == null) {
+                .orElse(null);
+        if (config == null) {
             log.warn("Self-monitoring notifier with ID {} not found. Cannot send notifications.", SELF_MONITORING_NOTIFIER_ID);
             return;
         }
@@ -62,7 +63,7 @@ public class SelfMonitoringService implements AkiraMonitoring {
 
         log.debug("Performing self-monitoring connectivity check...");
         boolean isConnected = isInternetAvailable();
-        
+
         if (isConnected && !lastCheckStatus) {
             log.info("Internet connection has been restored.");
             notifier.send(messageSource.getMessage("self.monitor.alert.restored", null, Locale.getDefault()));
@@ -70,7 +71,7 @@ public class SelfMonitoringService implements AkiraMonitoring {
             log.warn("Internet connection has been lost.");
             notifier.send(messageSource.getMessage("self.monitor.alert.lost", null, Locale.getDefault()));
         }
-        
+
         lastCheckStatus = isConnected;
     }
 
@@ -87,17 +88,16 @@ public class SelfMonitoringService implements AkiraMonitoring {
                     }
                 } catch (Exception e) {
                     log.debug("Connectivity check failed for host {} on attempt {}: {}", host, attempt, e.getMessage());
-                    continue;
                 }
             }
-            
+
             if (attempt < connectivityRetryCount) {
                 log.debug("Internet connectivity check failed on attempt {}/{}, retrying...", attempt, connectivityRetryCount);
             } else {
-                log.debug("Internet connectivity check failed after {} attempts", connectivityRetryCount);
+                log.warn("Internet connectivity check failed after {} attempts", connectivityRetryCount);
             }
         }
 
-        return false;        
+        return false;
     }
 }

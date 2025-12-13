@@ -26,4 +26,31 @@ services:
       -c ssl_key_file=/var/lib/postgresql/run-certs/server.key
       "
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U akira"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  akira:
+    container_name: akira-app
+    image: ${DOCKER_USERNAME:-yourusername}/akira:latest
+    ports:
+      - "8443:8443"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/akira?sslmode=require
+      SPRING_DATASOURCE_USERNAME: akira
+      SPRING_DATASOURCE_PASSWORD: akira
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: admin
+      # Сертификаты монтируются через volume, пути указываются через переменные окружения
+      SERVER_SSL_CERTIFICATE: file:/app/certs/server.crt
+      SERVER_SSL_CERTIFICATE_PRIVATE_KEY: file:/app/certs/server.key
+    volumes:
+      # Монтируем сертификаты из локальной директории (read-only)
+      - ./certs:/app/certs:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 

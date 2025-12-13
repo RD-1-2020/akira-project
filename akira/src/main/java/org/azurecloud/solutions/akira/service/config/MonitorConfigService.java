@@ -6,6 +6,7 @@ import org.azurecloud.solutions.akira.exception.AkiraException;
 import org.azurecloud.solutions.akira.model.entity.MonitorConfig;
 import org.azurecloud.solutions.akira.repository.MonitorConfigRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,20 +17,20 @@ public class MonitorConfigService {
 
     private final MonitorConfigRepository repository;
 
-    public List<MonitorConfig> getAll() {
+    public @NonNull List<MonitorConfig> getAll() {
         return repository.findAll();
     }
 
-    public MonitorConfig getById(Long id) {
+    public MonitorConfig getById(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND));
     }
 
-    public MonitorConfig create(MonitorConfig config) {
+    public MonitorConfig create(@NonNull MonitorConfig config) {
         return repository.save(config);
     }
 
-    public MonitorConfig update(Long id, MonitorConfig config) {
+    public MonitorConfig update(@NonNull Long id, @NonNull MonitorConfig config) {
         if (!repository.existsById(id)) {
             throw new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
@@ -37,7 +38,7 @@ public class MonitorConfigService {
         return repository.save(config);
     }
 
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         if (!repository.existsById(id)) {
             throw new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND);
         }

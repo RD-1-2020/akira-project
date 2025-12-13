@@ -6,6 +6,7 @@ import org.azurecloud.solutions.akira.exception.AkiraErrorCode;
 import org.azurecloud.solutions.akira.exception.AkiraException;
 import org.azurecloud.solutions.akira.repository.NotifierConfigRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,20 +17,20 @@ public class NotifierConfigService {
 
     private final NotifierConfigRepository repository;
 
-    public List<NotifierConfig> getAll() {
+    public @NonNull List<NotifierConfig> getAll() {
         return repository.findAll();
     }
 
-    public NotifierConfig getById(Long id) {
+    public NotifierConfig getById(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND));
     }
 
-    public NotifierConfig create(NotifierConfig config) {
+    public NotifierConfig create(@NonNull NotifierConfig config) {
         return repository.save(config);
     }
 
-    public NotifierConfig update(Long id, NotifierConfig config) {
+    public NotifierConfig update(@NonNull Long id, @NonNull NotifierConfig config) {
         if (!repository.existsById(id)) {
             throw new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
@@ -37,7 +38,7 @@ public class NotifierConfigService {
         return repository.save(config);
     }
 
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         if (!repository.existsById(id)) {
             throw new AkiraException(AkiraErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND);
         }

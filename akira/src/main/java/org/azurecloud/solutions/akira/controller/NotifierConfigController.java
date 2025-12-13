@@ -7,7 +7,10 @@ import org.azurecloud.solutions.akira.model.entity.NotifierConfig;
 import org.azurecloud.solutions.akira.service.config.NotificationMessageService;
 import org.azurecloud.solutions.akira.service.config.NotifierConfigService;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -27,22 +30,23 @@ public class NotifierConfigController {
     }
 
     @GetMapping("/{id}")
-    public NotifierConfig getNotifierById(@PathVariable Long id) {
+    public NotifierConfig getNotifierById(@PathVariable @NonNull Long id) {
         return notifierConfigService.getById(id);
     }
 
     @PostMapping
-    public NotifierConfig createNotifierConfig(@RequestBody NotifierConfig config) {
+    public NotifierConfig createNotifierConfig(@RequestBody @Valid @NonNull NotifierConfig config) {
         return notifierConfigService.create(config);
     }
 
     @PutMapping("/{id}")
-    public NotifierConfig updateNotifier(@PathVariable Long id, @RequestBody NotifierConfig config) {
+    public NotifierConfig updateNotifier(@PathVariable @NonNull Long id, @RequestBody @Valid @NonNull NotifierConfig config) {
         return notifierConfigService.update(id, config);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteNotifierConfig(@PathVariable Long id) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteNotifierConfig(@PathVariable @NonNull Long id) {
         notifierConfigService.delete(id);
     }
 
@@ -54,18 +58,18 @@ public class NotifierConfigController {
     }
 
     @GetMapping(Endpoints.MESSAGES + "/{id}")
-    public NotificationMessage getMessageById(@PathVariable Long id) {
+    public NotificationMessage getMessageById(@PathVariable @NonNull Long id) {
         return notificationMessageService.getById(id);
     }
 
     @PostMapping(Endpoints.MESSAGES + "/{id}/retry")
-    public NotificationMessage retryMessage(@PathVariable Long id) {
+    public NotificationMessage retryMessage(@PathVariable @NonNull Long id) {
         return notificationMessageService.retry(id);
     }
 
     @DeleteMapping(Endpoints.MESSAGES + "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMessage(@PathVariable Long id) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteMessage(@PathVariable @NonNull Long id) {
         notificationMessageService.delete(id);
     }
 }

@@ -1,11 +1,12 @@
 [versions]
 java = "24"
-springBoot = "3.5.6"
+springBoot = "3.5.8"
 telegrambots = "6.9.7.1"
 postgresql = "42.7.3"
 lombok = "1.18.42"
 springDependencyManagement = "1.1.6"
 httpclient = "4.5.14"
+jib = "3.5.1"
 
 [libraries]
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
@@ -21,3 +22,4 @@ httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "h
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+jib = { id = "com.google.cloud.tools.jib", version.ref = "jib" }

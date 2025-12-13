@@ -22,9 +22,9 @@ monitoring:
 server:
   port: 8443
   ssl:
-    certificate: classpath:/certs/server.crt
-    certificate-private-key: classpath:/certs/server.key
-    enabled: true
+    certificate: ${SERVER_SSL_CERTIFICATE:classpath:/certs/server.crt}
+    certificate-private-key: ${SERVER_SSL_CERTIFICATE_PRIVATE_KEY:classpath:/certs/server.key}
+    enabled: ${SERVER_SSL_ENABLED:true}
 spring:
   application:
     name: akira
