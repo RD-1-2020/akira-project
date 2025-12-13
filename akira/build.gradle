@@ -33,13 +33,13 @@ dependencies {
 
 tasks.register('npmInstall', Exec) {
     workingDir '../akira-frontend'
-    commandLine 'npm.cmd', 'install'
+    commandLine System.getProperty("os.name").startsWith("Windows") ? 'npm.cmd' : 'npm', 'install'
 }
 
 tasks.register('buildFrontend', Exec) {
     dependsOn npmInstall
     workingDir '../akira-frontend'
-    commandLine 'npm.cmd', 'run', 'build'
+    commandLine System.getProperty("os.name").startsWith("Windows") ? 'npm.cmd' : 'npm', 'run', 'build'
 }
 
 // Make the 'processResources' task depend on 'buildFrontend'
@@ -71,10 +71,10 @@ jib {
         def dockerUsername = project.findProperty('docker.username') ?: System.getenv('DOCKER_USERNAME') ?: 'akira'
         def imageName = project.findProperty('docker.image') ?: 'akira'
         image = "${dockerUsername}/${imageName}"
-        tags = [project.version, 'latest']
+        tags = [project.version.toString(), 'latest']
         auth {
-            username = project.findProperty('docker.username') ?: System.getenv('DOCKER_USERNAME') ?: ""
-            password = project.findProperty('docker.password') ?: System.getenv('DOCKER_PASSWORD') ?: ""
+            username = project.findProperty('docker.username') ? System.getenv('DOCKER_USERNAME') : ""
+            password = project.findProperty('docker.password') ? System.getenv('DOCKER_PASSWORD') : ""
         }
     }
     container {
