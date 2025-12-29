@@ -71,14 +71,19 @@ jobs:
 
       - name: Build and push Docker image with Jib
         if: github.event_name != 'pull_request'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           ./gradlew :akira:jib \
-            -Pdocker.username=${{ secrets.DOCKER_USERNAME }} \
-            -Pdocker.password=${{ secrets.DOCKER_PASSWORD }}
+            -Pdocker.username="${DOCKER_USERNAME}" \
+            -Pdocker.password="${DOCKER_PASSWORD}"
 
       - name: Build Docker image with Jib (no push)
         if: github.event_name == 'pull_request'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           ./gradlew :akira:jibDockerBuild \
-            -Pdocker.username=${{ secrets.DOCKER_USERNAME }}
+            -Pdocker.username="${DOCKER_USERNAME}"
 

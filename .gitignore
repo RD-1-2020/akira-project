@@ -3,6 +3,7 @@
 build/
 **/build/**
 **/bin/**
+.**ggshield**
 
 # IDE files
 .idea/

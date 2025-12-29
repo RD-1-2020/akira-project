@@ -27,8 +27,8 @@ dependencies {
     compileOnly libs.lombok
     annotationProcessor libs.lombok
     
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.security.test
 }
 
 tasks.register('npmInstall', Exec) {
@@ -63,25 +63,35 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+def baseImage = 'bellsoft/liberica-openjre-alpine:24'
+def dockerRegistry = providers.gradleProperty('docker.username').getOrElse('akira')
+def imageTag = project.version.toString()
+def fullVersion = project.version.toString()
+
 jib {
     from {
-        image = 'eclipse-temurin:24-jre-alpine'
+        image = "${baseImage}"
     }
     to {
-        def dockerUsername = project.findProperty('docker.username') ?: System.getenv('DOCKER_USERNAME') ?: 'akira'
-        def imageName = project.findProperty('docker.image') ?: 'akira'
-        image = "${dockerUsername}/${imageName}"
-        tags = [project.version.toString(), 'latest']
+        image = "${dockerRegistry}/akira:${imageTag}"
         auth {
-            username = project.findProperty('docker.username') ? System.getenv('DOCKER_USERNAME') : ""
-            password = project.findProperty('docker.password') ? System.getenv('DOCKER_PASSWORD') : ""
+            username = providers.gradleProperty('docker.username')
+                    .orElse(providers.environmentVariable('DOCKER_USERNAME'))
+                    .getOrElse('akira')
+            password = providers.gradleProperty('docker.password')
+                    .orElse(providers.environmentVariable('DOCKER_PASSWORD'))
+                    .getOrElse('')
         }
     }
     container {
+        labels.put 'org.opencontainers.image.version', "${fullVersion}"
+        labels.put 'org.opencontainers.image.title', 'Akira'
+        labels.put 'org.opencontainers.image.description', 'Akira Project'
+        
         jvmFlags = ['-Djava.security.egd=file:/dev/./urandom']
         ports = ['8443']
-        user = 'spring:spring'
         workingDirectory = '/app'
-        creationTime = 'USE_CURRENT_TIMESTAMP'
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        mainClass = 'org.azurecloud.solutions.akira.AkiraApplication'
     }
 }
