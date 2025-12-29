@@ -10,13 +10,13 @@
         <sql>
             CREATE TYPE notifier_type AS ENUM ('TELEGRAM');
         </sql>
-        
+
         <sql>
             CREATE TYPE notification_status AS ENUM ('CREATED', 'DELIVERED', 'FAILED');
         </sql>
-        
+
         <sql>
-            CREATE TYPE monitor_status AS ENUM ('ACTIVE', 'FAILED');
+            CREATE TYPE client_status AS ENUM ('OK', 'FAILED');
         </sql>
 
         <createTable tableName="notifier_config">
@@ -33,51 +33,6 @@
             <column name="chat_id" type="VARCHAR(255)"/>
         </createTable>
 
-        <createTable tableName="monitor_config">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="status" type="monitor_status">
-                <constraints nullable="false"/>
-            </column>
-            <column name="notifier_config_id" type="BIGINT">
-                <constraints foreignKeyName="fk_monitor_notifier" references="notifier_config(id)"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="http_monitor_config">
-            <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_http_monitor_config_id" references="monitor_config(id)"/>
-            </column>
-            <column name="url" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="expected_status" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="check_interval" type="INTERVAL"/>
-            <column name="timeout" type="INTERVAL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ignore_tls_errors" type="BOOLEAN"/>
-        </createTable>
-
-        <createTable tableName="syslog_monitor_config">
-            <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_syslog_monitor_config_id" references="monitor_config(id)"/>
-            </column>
-            <column name="source_ip" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="no_message_interval" type="INTERVAL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_message_at" type="TIMESTAMP"/>
-        </createTable>
-
         <createTable tableName="notification_message">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -91,16 +46,34 @@
             <column name="updated_at" type="TIMESTAMP"/>
         </createTable>
 
-        <createTable tableName="syslog_message">
+        <createTable tableName="clients">
+            <column name="hostname" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="status" type="client_status">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_message_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <createTable tableName="client_messages">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="message" type="TEXT"/>
-            <column name="received_at" type="TIMESTAMP"/>
-            <column name="source_id" type="BIGINT">
-                <constraints foreignKeyName="fk_syslog_message_source" references="syslog_monitor_config(id)"/>
+            <column name="client_hostname" type="VARCHAR(255)">
+                <constraints nullable="false" foreignKeyName="fk_message_client" references="clients(hostname)"/>
+            </column>
+            <column name="message" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="received_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
             </column>
         </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

@@ -4,7 +4,6 @@ export const NotifierType = {
     TELEGRAM: 'TELEGRAM' as NotifierType
 };
 
-// Update models to match backend entities
 export interface NotifierConfig {
     id?: number;
     name: string;
@@ -14,33 +13,7 @@ export interface NotifierConfig {
 export interface TelegramNotifierConfig extends NotifierConfig {
     botToken: string;
     chatId: string;
-}
-
-export type MonitorType = 'HTTP' | 'SYSLOG';
-
-export type MonitorStatus = 'ACTIVE' | 'FAILED';
-
-export type MonitorConfig = HttpMonitorConfig | SyslogMonitorConfig;
-
-export interface HttpMonitorConfig {
-    id?: number;
-    name: string;
-    monitor_type: 'HTTP';
-    url: string;
-    expectedStatus: number;
-    timeout?: number;
-    status: MonitorStatus;
-    notifierConfig?: NotifierConfig;
-}
-
-export interface SyslogMonitorConfig {
-    id?: number;
-    name: string;
-    monitor_type: 'SYSLOG';
-    sourceIp: string;
-    noMessageInterval?: number;
-    status: MonitorStatus;
-    notifierConfig?: NotifierConfig;
+    notifier_type: 'TELEGRAM';
 }
 
 export interface NotificationMessage {
@@ -52,22 +25,25 @@ export interface NotificationMessage {
     updatedAt: string; // ISO DateTime string
 }
 
-export interface SyslogMessage {
+export type ClientStatus = 'OK' | 'FAILED';
+
+export interface Client {
+    hostname: string;
+    status: ClientStatus;
+    lastMessageAt?: string;
+}
+
+export interface ClientMessage {
     id: number;
-    sourceId: number;
     message: string;
-    receivedAt: string; // ISO DateTime string
+    clientTimestamp: string;
+    receivedAt: string;
 }
 
-export interface SyslogMessageStats {
-    hourlyStats: HourlyStats[];
-    mean: number;
-    standardDeviation: number;
-}
-
-export interface HourlyStats {
-    hour: number;
-    count: number;
-    isAnomaly?: boolean;
-    anomaly?: boolean; // Jackson сериализует isAnomaly как anomaly
+export interface Page<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
 }

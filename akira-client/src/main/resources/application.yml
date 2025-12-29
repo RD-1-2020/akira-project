@@ -1,0 +1,7 @@
+akira:
+  server:
+    url: ${AKIRA_SERVER_URL:https://127.0.0.1:8443}
+    token: ${AKIRA_SERVER_TOKEN:secret_token_123}
+    cert-unsecure: ${AKIRA_CERT_UNSECURE:false}
+  client:
+    hostname: ${HOSTNAME:unknown}

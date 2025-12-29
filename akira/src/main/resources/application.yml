@@ -1,24 +1,3 @@
-monitoring:
-  http:
-    scheduler:
-      rate:
-        ms: 60000
-  self:
-    connectivity:
-      hosts:
-        - 8.8.8.8
-        - 8.8.4.4
-        - 1.1.1.1
-        - 1.0.0.1
-      retry:
-        count: 3
-    scheduler:
-      rate:
-        ms: 30000
-  syslog:
-    scheduler:
-      rate:
-        ms: 60000
 server:
   port: 8443
   ssl:
@@ -29,9 +8,9 @@ spring:
   application:
     name: akira
   datasource:
-    password: akira
     url: jdbc:postgresql://akira-postgres:5432/akira?sslmode=require
     username: akira
+    password: akira
   jpa:
     hibernate:
       ddl-auto: none
@@ -42,3 +21,12 @@ spring:
     user:
       name: admin
       password: admin
+
+akira:
+  ops:
+    token: ${OPS_TOKEN:secret_token_123}
+  monitoring:
+    client-timeout-seconds: 300
+    scheduler:
+      rate:
+        ms: 60000
