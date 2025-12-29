@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: akira
       POSTGRES_USER: akira
-      POSTGRES_PASSWORD: akira
+      POSTGRES_PASSWORD: # generate any password for postgres
     volumes:
       # - ./postgres-data:/var/lib/postgresql/data
       - ./certs:/etc/postgresql/certs:ro
@@ -40,7 +40,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/akira?sslmode=require
       SPRING_DATASOURCE_USERNAME: akira
-      SPRING_DATASOURCE_PASSWORD: akira
+      SPRING_DATASOURCE_PASSWORD: # generate any password for connect to postgres database
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: admin
       # Сертификаты монтируются через volume, пути указываются через переменные окружения
