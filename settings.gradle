@@ -4,6 +4,7 @@ plugins {
 rootProject.name = 'akira-project'
 
 include 'akira'
+include 'akira-client'
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)

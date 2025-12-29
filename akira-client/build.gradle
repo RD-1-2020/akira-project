@@ -1,0 +1,70 @@
+plugins {
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency.management)
+	alias(libs.plugins.jib)
+	id 'java'
+}
+
+group = 'org.azurecloud.solutions'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+dependencies {
+	implementation libs.spring.boot.starter.web
+    implementation libs.docker.java.api
+    implementation libs.docker.java.core
+    implementation libs.docker.java.transport
+	
+	compileOnly libs.lombok
+	annotationProcessor libs.lombok
+	
+	testImplementation libs.spring.boot.starter.test
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+def baseImage = 'bellsoft/liberica-openjre-alpine:24'
+def dockerRegistry = providers.gradleProperty('docker.username').getOrElse('akira')
+def imageTag = project.version.toString()
+def fullVersion = project.version.toString()
+
+jib {
+    from {
+        image = "${baseImage}"
+    }
+    to {
+        image = "${dockerRegistry}/akira-client"
+        tags = [imageTag, 'latest']
+        auth {
+            username = providers.gradleProperty('docker.username')
+                    .orElse(providers.environmentVariable('DOCKER_USERNAME'))
+                    .getOrElse('akira')
+            password = providers.gradleProperty('docker.password')
+                    .orElse(providers.environmentVariable('DOCKER_PASSWORD'))
+                    .getOrElse('')
+        }
+    }
+    container {
+        labels.put 'org.opencontainers.image.version', "${fullVersion}"
+        labels.put 'org.opencontainers.image.title', 'Akira Client'
+        labels.put 'org.opencontainers.image.description', 'Akira Client Agent'
+        
+        jvmFlags = ['-Djava.security.egd=file:/dev/./urandom']
+        workingDirectory = '/app'
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        mainClass = 'org.azurecloud.solutions.akiraclient.AkiraClientApplication'
+    }
+}
