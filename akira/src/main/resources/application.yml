@@ -24,13 +24,13 @@ server:
   ssl:
     certificate: ${SERVER_SSL_CERTIFICATE:classpath:/certs/server.crt}
     certificate-private-key: ${SERVER_SSL_CERTIFICATE_PRIVATE_KEY:classpath:/certs/server.key}
-    enabled: ${SERVER_SSL_ENABLED:true}
+    enabled: true
 spring:
   application:
     name: akira
   datasource:
     password: akira
-    url: jdbc:postgresql://localhost:5432/akira?sslmode=require
+    url: jdbc:postgresql://akira-postgres:5432/akira?sslmode=require
     username: akira
   jpa:
     hibernate:
