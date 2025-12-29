@@ -73,7 +73,8 @@ jib {
         image = "${baseImage}"
     }
     to {
-        image = "${dockerRegistry}/akira:${imageTag}"
+        image = "${dockerRegistry}/akira"
+        tags = [imageTag, 'latest']
         auth {
             username = providers.gradleProperty('docker.username')
                     .orElse(providers.environmentVariable('DOCKER_USERNAME'))
